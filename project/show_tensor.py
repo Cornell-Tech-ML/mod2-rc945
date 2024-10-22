@@ -377,7 +377,7 @@ def plot_tensor(x, y, z, active=5):
                 str((np.array([i[0], i[2], i[1]]) / (1.1)).astype(int))
                 .replace(" ", ",")
                 .replace("[", "(")
-                .replace("]", ")"),
+                .replace("]", ")")
             )
 
     box_adder(tensor_coords)
