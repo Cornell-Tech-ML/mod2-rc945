@@ -25,35 +25,18 @@ ScalarLike = Union[float, int, "Scalar"]
 
 @dataclass
 class ScalarHistory:
-    """`ScalarHistory` stores the history of `Function` operations that was
-    used to construct the current Variable.
-
-    Attributes
-    ----------
-        last_fn : The last Function that was called.
-        ctx : The context for that Function.
-        inputs : The inputs that were given when `last_fn.forward` was called.
-
-    """
+    """`ScalarHistory` stores the history of `Function` operations that was used to construct the current Variable."""
 
     last_fn: Optional[Type[ScalarFunction]] = None
     ctx: Optional[Context] = None
     inputs: Sequence[Scalar] = ()
 
 
-# ## Task 1.2 and 1.4
-# Scalar Forward and Backward
-
 _var_count = 0
 
 
 class Scalar:
-    """A reimplementation of scalar values for autodifferentiation
-    tracking. Scalar Variables behave as close as possible to standard
-    Python numbers while also tracking the operations that led to the
-    number's creation. They can only be manipulated by
-    `ScalarFunction`.
-    """
+    """A reimplementation of scalar values for autodifferentiation tracking."""
 
     history: Optional[ScalarHistory]
     derivative: Optional[float]
@@ -110,7 +93,7 @@ class Scalar:
         """Greater than comparison between two scalars."""
         return LT.apply(b, self)
 
-    def __eq__(self, b: ScalarLike) -> Scalar:  # type: ignore[override]
+    def __eq__(self, b: ScalarLike) -> Scalar:
         """Equal comparison between two scalars."""
         return EQ.apply(self, b)
 
@@ -146,17 +129,8 @@ class Scalar:
         """ReLU of a scalar."""
         return ReLU.apply(self)
 
-    # Variable elements for backprop
-
     def accumulate_derivative(self, x: Any) -> None:
-        """Add `val` to the the derivative accumulated on this variable.
-        Should only be called during autodifferentiation on leaf variables.
-
-        Args:
-        ----
-            x: value to be accumulated
-
-        """
+        """Add `val` to the the derivative accumulated on this variable."""
         assert self.is_leaf(), "Only leaf variables can have derivatives."
         if self.derivative is None:
             self.derivative = 0.0
@@ -187,14 +161,7 @@ class Scalar:
         return list(zip(h.inputs, x))
 
     def backward(self, d_output: Optional[float] = None) -> None:
-        """Calls autodiff to fill in the derivatives for the history of this object.
-
-        Args:
-        ----
-            d_output (number, opt): starting derivative to backpropagate through the model
-                                   (typically left out, and assumed to be 1.0).
-
-        """
+        """Calls autodiff to fill in the derivatives for the history of this object."""
         if d_output is None:
             d_output = 1.0
         backpropagate(self, d_output)
